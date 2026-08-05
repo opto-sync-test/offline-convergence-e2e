@@ -3,12 +3,12 @@
   "sources": {
     "opto-sync/opto-sync-clients": {
       "branch": "main",
-      "sha": "068414c8ff7d4262d0a395959b5209d5908f0fcc",
+      "sha": "c93672ebfe7659243cafcd9d108ab4f17f2b2a87",
       "exists": true
     },
     "opto-sync/opto-sync-e2e": {
       "branch": "main",
-      "sha": "f50ef120afed4650693468453a5b4095d433fd26",
+      "sha": "c2fe2ec5be223fd908becb1a4e7d731ab48fc41d",
       "exists": true
     }
   }
