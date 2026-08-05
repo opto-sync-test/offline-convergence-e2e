@@ -17,8 +17,8 @@ Source organization: `opto-sync`
 
 | Source | Commit | Branch observed |
 |---|---:|---|
-| `opto-sync/opto-sync-clients` | `068414c8ff7d4262d0a395959b5209d5908f0fcc` | `main` |
-| `opto-sync/opto-sync-e2e` | `f50ef120afed4650693468453a5b4095d433fd26` | `main` |
+| `opto-sync/opto-sync-clients` | `c93672ebfe7659243cafcd9d108ab4f17f2b2a87` | `main` |
+| `opto-sync/opto-sync-e2e` | `c2fe2ec5be223fd908becb1a4e7d731ab48fc41d` | `main` |
 
 ## Dependency lanes
 
