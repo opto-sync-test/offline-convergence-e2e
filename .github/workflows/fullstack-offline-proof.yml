@@ -82,6 +82,10 @@ jobs:
           test "$(git -C opto-sync-e2e rev-parse HEAD)" = "$E2E_SHA"
           test "$(git -C opto-sync-clients rev-parse HEAD:syncer.c)" = "$SYNCER_C_SHA"
           test "$(git -C opto-sync-clients/syncer.c rev-parse HEAD)" = "$SYNCER_C_SHA"
+          test -f opto-sync-clients/clients/reactive-ts/src/service-worker.ts
+          test -f opto-sync-clients/clients/reactive-dart/lib/opto_sync_reactive.dart
+          test -f opto-sync-clients/clients/flutter_background/lib/opto_sync_flutter_background.dart
+          test -f opto-sync-e2e/suite/protocol/ws-transport.mjs
           git -C opto-sync-clients submodule status --cached syncer.c
 
   live-client-convergence:
