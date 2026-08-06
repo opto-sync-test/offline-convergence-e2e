@@ -1,6 +1,7 @@
 name: full-stack offline convergence proof
 
 on:
+  workflow_call:
   pull_request:
   push:
     branches: [main]
