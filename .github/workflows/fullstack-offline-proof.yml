@@ -325,8 +325,20 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Build the pinned native core for Dart FFI tests
+        working-directory: opto-sync-clients/syncer.c/core
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          cd build
+          cmake ..
+          cmake --build . --target syncer --parallel 2
+          test -f libsyncer.so
+
       - name: Test the Drift, SQLite, and RxDart client
         working-directory: opto-sync-clients/clients/dart
+        env:
+          SYNCER_LIB_PATH: ${{ github.workspace }}/opto-sync-clients/syncer.c/core/build/libsyncer.so
         run: |
           set -euo pipefail
           dart pub get
