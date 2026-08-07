@@ -29,3 +29,8 @@ jobs:
           echo "Profile: interop-e2e"
           echo "Required checks are defined in test-plan.json."
           echo "Add product-specific executable fixtures here without weakening the generated contract."
+
+  fullstack-offline-proof:
+    name: executable local-first runtime proof
+    if: github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/fullstack-offline-proof.yml
