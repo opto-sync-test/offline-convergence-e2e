@@ -1,0 +1,8 @@
+{
+  "sourceRepository": "opto-sync/opto-sync-clients",
+  "sourceCommit": "c6f51462fd7d2e54d2aa3e7b684b41e5a4d7e022",
+  "sourcePullRequest": 79,
+  "expectedContract": "formal/standalone-export.v1.json",
+  "expectedExporter": "tools/export_formal_methods_standalone.py",
+  "expectedHarness": "tools/test_formal_methods_standalone_export.sh"
+}
