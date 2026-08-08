@@ -76,7 +76,7 @@ jobs:
         run: |
           set -euo pipefail
           out="$RUNNER_TEMP/den-580-independent-export"
-          python3 source/tools/export_formal_methods_standalone.py "$out"
+          python3 source/tools/export_formal_methods_standalone.py --destination "$out"
           OUT="$out" python3 - <<'PY'
           import hashlib
           import json
