@@ -62,7 +62,7 @@ jobs:
           test "$(git -C source rev-parse HEAD)" = 'c6f51462fd7d2e54d2aa3e7b684b41e5a4d7e022'
           test -f source/formal/standalone-export.v1.json
           test -f source/tools/export_formal_methods_standalone.py
-          test -x source/tools/test_formal_methods_standalone_export.sh
+          test -f source/tools/test_formal_methods_standalone_export.sh
 
       - name: Run production export contract from independent repository
         shell: bash
