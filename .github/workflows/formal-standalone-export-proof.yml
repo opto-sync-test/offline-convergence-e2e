@@ -1,0 +1,99 @@
+name: DEN-580 external standalone export proof
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/formal-standalone-export-proof.yml'
+      - 'formal-export-pin.json'
+      - 'docs/formal-standalone-export-proof.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: den-580-export-proof-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  independent-export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout proof harness without credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          show-progress: false
+
+      - name: Install Rust 1.88
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: '1.88.0'
+
+      - name: Validate immutable source pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          pin = json.loads(Path('formal-export-pin.json').read_text())
+          assert pin['sourceRepository'] == 'opto-sync/opto-sync-clients'
+          assert pin['sourceCommit'] == 'c6f51462fd7d2e54d2aa3e7b684b41e5a4d7e022'
+          assert pin['sourcePullRequest'] == 79
+          assert len(pin['sourceCommit']) == 40
+          PY
+
+      - name: Checkout exact merged production source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: opto-sync/opto-sync-clients
+          ref: c6f51462fd7d2e54d2aa3e7b684b41e5a4d7e022
+          path: source
+          persist-credentials: false
+          show-progress: false
+          submodules: false
+
+      - name: Prove external checkout identity and contract presence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C source rev-parse HEAD)" = 'c6f51462fd7d2e54d2aa3e7b684b41e5a4d7e022'
+          test -f source/formal/standalone-export.v1.json
+          test -f source/tools/export_formal_methods_standalone.py
+          test -f source/tools/test_formal_methods_standalone_export.sh
+
+      - name: Run production export contract from independent repository
+        shell: bash
+        working-directory: source
+        run: |
+          set -euo pipefail
+          bash tools/test_formal_methods_standalone_export.sh
+
+      - name: Independently inspect exported provenance
+        shell: bash
+        working-directory: source
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/den-580-independent-export"
+          python3 tools/export_formal_methods_standalone.py --destination "$out"
+          OUT="$out" python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ['OUT'])
+          provenance = json.loads((root / 'SOURCE_EXPORT.json').read_text())
+          assert provenance['source_repository'] == 'opto-sync/opto-sync-clients'
+          assert provenance['source_commit'] == 'c6f51462fd7d2e54d2aa3e7b684b41e5a4d7e022'
+          assert provenance['files'] == sorted(provenance['files'], key=lambda item: item['path'])
+          assert provenance['files'], 'export must contain reusable assets'
+          for item in provenance['files']:
+              path = root / item['path']
+              payload = path.read_bytes()
+              assert len(payload) == item['size']
+              assert hashlib.sha256(payload).hexdigest() == item['sha256']
+              assert not item['path'].startswith(('clients/', 'adoption/', 'formal/models/', 'formal/traces/'))
+          PY
